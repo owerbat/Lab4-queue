@@ -51,4 +51,21 @@ public:
 			return 1;
 		return 0;
 	}
+
+	void push(const T elem) {
+		if (isfull)
+			throw "The queue is full, you can't add a new element";
+		last = (last + 1) % maxsize;
+		ring[last] = elem;
+		size++;
+	}
+
+	T pop() {
+		if (isempty())
+			throw "The queue is empty, you can't delete an element";
+		uint tmp = first;
+		first = (first + 1) % maxsize;
+		size--;
+		return ring[tmp];
+	}
 };
