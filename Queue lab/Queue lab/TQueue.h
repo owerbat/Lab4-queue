@@ -40,5 +40,15 @@ public:
 		delete[] ring;
 	}
 
+	int isempty() {
+		if (size == 0)
+			return 1;
+		return 0;
+	}
 
+	int isfull() {
+		if (size == maxsize)
+			return 1;
+		return 0;
+	}
 };
