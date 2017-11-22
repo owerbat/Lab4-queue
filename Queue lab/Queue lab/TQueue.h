@@ -14,5 +14,31 @@ class TQueue {
 	uint maxsize;
 	T* ring;
 public:
+	TQueue(uint _maxsize = 10) {
+		maxsize = _maxsize;
+		ring = new T[maxsize];
+		first = 0;
+		last = -1;
+		size = 0;
+	}
+
+	TQueue(const TQueue& q) {
+		if (maxsize != q.maxsize) {
+			q.maxsize = maxsize;
+			delete[] q.ring;
+			q.ring = new T[q.maxsize];
+		}
+		q.first = first;
+		q.last = last;
+		q.size = size;
+		for (uint i = first; i <= last; i++) {
+			q.ring[i] = ring[i];
+		}
+	}
+
+	~TQueue() {
+		delete[] ring;
+	}
+
 
 };
