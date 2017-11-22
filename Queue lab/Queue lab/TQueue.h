@@ -4,17 +4,19 @@
 
 using namespace std;
 
-typedef unsigned int uint;
+//typedef unsigned int uint;
 
 template <class T>
 class TQueue {
-	uint first;
-	uint last;
-	uint size;
-	uint maxsize;
+	int first;
+	int last;
+	int size;
+	int maxsize;
 	T* ring;
 public:
-	TQueue(uint _maxsize = 10) {
+	TQueue(int _maxsize = 10) {
+		if (_maxsize <= 0)
+			throw "Queue's maxsize must be a positive number";
 		maxsize = _maxsize;
 		ring = new T[maxsize];
 		first = 0;
@@ -31,7 +33,7 @@ public:
 		q.first = first;
 		q.last = last;
 		q.size = size;
-		for (uint i = first; i <= last; i++) {
+		for (int i = first; i <= last; i++) {
 			q.ring[i] = ring[i];
 		}
 	}
@@ -63,7 +65,7 @@ public:
 	T pop() {
 		if (isempty())
 			throw "The queue is empty, you can't delete an element";
-		uint tmp = first;
+		int tmp = first;
 		first = (first + 1) % maxsize;
 		size--;
 		return ring[tmp];
