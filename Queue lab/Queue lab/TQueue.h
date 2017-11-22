@@ -70,4 +70,12 @@ public:
 		size--;
 		return ring[tmp];
 	}
+
+	T getFirst() {
+		return ring[first];
+	}
+
+	T getLast() {
+		return ring[last];
+	}
 };
