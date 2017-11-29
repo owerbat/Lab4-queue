@@ -71,11 +71,23 @@ public:
 		return ring[tmp];
 	}
 
-	T getFirst() {
+	T getFirstElem() {
 		return ring[first];
 	}
 
-	T getLast() {
+	T getLastElem() {
 		return ring[last];
+	}
+
+	int getFirst() {
+		return first;
+	}
+
+	int getSize() {
+		return size;
+	}
+
+	int getMaxsize() {
+		return maxsize;
 	}
 };
