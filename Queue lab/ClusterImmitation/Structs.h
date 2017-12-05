@@ -12,4 +12,7 @@ struct Processor {
 	int CurrentStepCount;
 	int MaxStepCount;
 	int InactiveTactsCount;
+	int id;
+	int X;
+	int Y;
 };

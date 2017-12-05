@@ -10,6 +10,7 @@ class TQueue {
 	int last;
 	int size;
 	int maxsize;
+public:
 	T* ring;
 public:
 	TQueue(int _maxsize = 10) {
@@ -53,7 +54,7 @@ public:
 	}
 
 	void push(const T elem) {
-		if (isfull)
+		if (isfull())
 			throw "The queue is full, you can't add a new element";
 		last = (last + 1) % maxsize;
 		ring[last] = elem;
@@ -87,5 +88,11 @@ public:
 
 	int getMaxsize() {
 		return maxsize;
+	}
+
+	T top() {
+		if (isempty())
+			throw "The queue is empty, you can't get the top";
+		return ring[first];
 	}
 };
