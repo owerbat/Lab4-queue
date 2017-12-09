@@ -34,6 +34,8 @@ namespace ClusterImmitation {
 		int TactsCount;
 		int FullQTaskCount;
 		Processor *ProcArray;
+		int CountOfInactiveTacts;
+		double InactiveTactsPerProcessor;
 		
 
 
@@ -41,8 +43,10 @@ namespace ClusterImmitation {
 	private: System::Windows::Forms::Button^  button1;
 	private: System::Windows::Forms::Button^  button2;
 	private: System::Windows::Forms::Label^  label5;
-	private: System::Windows::Forms::TextBox^  textBox5;
+
 	private: System::Windows::Forms::Label^  label6;
+	private: System::Windows::Forms::Button^  button4;
+	private: System::Windows::Forms::Label^  label7;
 	private: System::Windows::Forms::Button^  button3;
 			
 
@@ -114,8 +118,9 @@ namespace ClusterImmitation {
 			this->button2 = (gcnew System::Windows::Forms::Button());
 			this->button3 = (gcnew System::Windows::Forms::Button());
 			this->label5 = (gcnew System::Windows::Forms::Label());
-			this->textBox5 = (gcnew System::Windows::Forms::TextBox());
 			this->label6 = (gcnew System::Windows::Forms::Label());
+			this->button4 = (gcnew System::Windows::Forms::Button());
+			this->label7 = (gcnew System::Windows::Forms::Label());
 			this->SuspendLayout();
 			// 
 			// textBox1
@@ -213,7 +218,7 @@ namespace ClusterImmitation {
 			// 
 			// button3
 			// 
-			this->button3->Location = System::Drawing::Point(160, 224);
+			this->button3->Location = System::Drawing::Point(161, 224);
 			this->button3->Name = L"button3";
 			this->button3->Size = System::Drawing::Size(75, 23);
 			this->button3->TabIndex = 10;
@@ -224,36 +229,49 @@ namespace ClusterImmitation {
 			// label5
 			// 
 			this->label5->AutoSize = true;
-			this->label5->Location = System::Drawing::Point(12, 302);
+			this->label5->Location = System::Drawing::Point(12, 311);
 			this->label5->Name = L"label5";
 			this->label5->Size = System::Drawing::Size(99, 17);
 			this->label5->TabIndex = 12;
 			this->label5->Text = L"Текущий такт";
 			// 
-			// textBox5
-			// 
-			this->textBox5->Location = System::Drawing::Point(170, 299);
-			this->textBox5->Name = L"textBox5";
-			this->textBox5->Size = System::Drawing::Size(66, 22);
-			this->textBox5->TabIndex = 11;
-			// 
 			// label6
 			// 
 			this->label6->AutoSize = true;
-			this->label6->Location = System::Drawing::Point(33, 360);
+			this->label6->Location = System::Drawing::Point(12, 586);
 			this->label6->Name = L"label6";
 			this->label6->Size = System::Drawing::Size(90, 17);
 			this->label6->TabIndex = 13;
 			this->label6->Text = L"Исключение";
+			// 
+			// button4
+			// 
+			this->button4->Location = System::Drawing::Point(78, 270);
+			this->button4->Name = L"button4";
+			this->button4->Size = System::Drawing::Size(95, 23);
+			this->button4->TabIndex = 14;
+			this->button4->Text = L"Статистика";
+			this->button4->UseVisualStyleBackColor = true;
+			this->button4->Click += gcnew System::EventHandler(this, &MyForm::button4_Click);
+			// 
+			// label7
+			// 
+			this->label7->AutoSize = true;
+			this->label7->Location = System::Drawing::Point(190, 311);
+			this->label7->Name = L"label7";
+			this->label7->Size = System::Drawing::Size(16, 17);
+			this->label7->TabIndex = 15;
+			this->label7->Text = L"0";
 			// 
 			// MyForm
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(8, 16);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
 			this->ClientSize = System::Drawing::Size(1315, 612);
+			this->Controls->Add(this->label7);
+			this->Controls->Add(this->button4);
 			this->Controls->Add(this->label6);
 			this->Controls->Add(this->label5);
-			this->Controls->Add(this->textBox5);
 			this->Controls->Add(this->button3);
 			this->Controls->Add(this->button2);
 			this->Controls->Add(this->button1);
@@ -279,6 +297,8 @@ namespace ClusterImmitation {
 
 		TactsCount = 0;
 		FullQTaskCount = 0;
+		CountOfInactiveTacts = 0;
+		InactiveTactsPerProcessor = 0.0;
 
 		ProcArray = new Processor[ProcCount];
 		for (int i = 0; i < ProcCount; i++) {
@@ -308,6 +328,12 @@ namespace ClusterImmitation {
 			}
 		}
 		
+		/*gr->FillRectangle(Brushes::LimeGreen, 1165, 10, 90, 65);
+		Pen ^blackpen = gcnew Pen(Brushes::Black, 2.0f);
+		gr->DrawRectangle(blackpen, 1165, 10, 90, 65);*/
+
+		gr->FillRectangle(Brushes::White, 1164, 9, 92, 592);
+
 	}
 private: System::Void button2_Click(System::Object^  sender, System::EventArgs^  e) {
 	timer1->Enabled = true;
@@ -322,6 +348,9 @@ private: System::Void timer1_Tick(System::Object^  sender, System::EventArgs^  e
 		int probability = Convert::ToInt32(textBox2->Text);
 		int MaxTaskProc = Convert::ToInt32(textBox4->Text);
 		int MaxTaskTact = Convert::ToInt32(textBox3->Text);
+		
+		float TaskHeight = 590.0 / (qTask->getMaxsize());
+		Pen ^blackpen = gcnew Pen(Brushes::Black, 2.0f);
 
 		if (qTask->isfull()) {
 			FullQTaskCount++;
@@ -333,13 +362,27 @@ private: System::Void timer1_Tick(System::Object^  sender, System::EventArgs^  e
 			temp.ID = qTask->getSize();
 			temp.ProcCount = rand() % (MaxTaskProc - 1) + 1;
 			temp.StepCount = rand() % (MaxTaskTact - 1) + 1;
+
+			/*gr->FillRectangle(Brushes::LimeGreen, 1165.0, (float) 10 + TaskHeight * (qTask->getSize()), 90.0, TaskHeight);
+			Pen ^blackpen = gcnew Pen(Brushes::Black, 2.0f);
+			gr->DrawRectangle(blackpen, 1165.0, (float) 10 + TaskHeight * (qTask->getSize()), 90.0, TaskHeight);*/
+
 			qTask->push(temp);
+		}
+
+		gr->FillRectangle(Brushes::White, 1164, 9, 92, 592);
+		for (int i = 0; i < qTask->getSize(); i++) {
+			gr->FillRectangle(Brushes::LimeGreen, 1165.0, (float)10 + TaskHeight * i, 90.0, TaskHeight);
+			gr->DrawRectangle(blackpen, 1165.0, (float)10 + TaskHeight * i, 90.0, TaskHeight);
 		}
 
 		if (!(qTask->isempty())) {
 			while (FreeProcCount(ProcArray, CountOfProc) >= (qTask->top().ProcCount)) {
 			//while (FreeProcCount(ProcArray, CountOfProc) >= (qTask->ring[qTask->getFirst()].ProcCount)) {
 				Task CurrentTask = qTask->pop();
+
+				//gr->FillRectangle(Brushes::White, 1165.0, (float)10 + TaskHeight * (qTask->getSize() - 1), 90.0, TaskHeight);
+
 				int color = rand() % 7;
 				for (int j = 0; j < CurrentTask.ProcCount; j++) {
 					int CurrentID;
@@ -372,6 +415,7 @@ private: System::Void timer1_Tick(System::Object^  sender, System::EventArgs^  e
 		for (int i = 0; i < CountOfProc; i++) {
 			if (ProcArray[i].free) {
 				ProcArray[i].InactiveTactsCount++;
+				CountOfInactiveTacts++;
 			}
 			else {
 				ProcArray[i].CurrentStepCount--;
@@ -386,14 +430,20 @@ private: System::Void timer1_Tick(System::Object^  sender, System::EventArgs^  e
 		}
 	
 		TactsCount++;
-		textBox5->Text = System::Convert::ToString(TactsCount);
-		
+		label7->Text = System::Convert::ToString(TactsCount);
 
+		InactiveTactsPerProcessor = (double) CountOfInactiveTacts / CountOfProc;
+		
 	}
 	catch (System::String ^str) {
-		//label6->Text = System::Convert::ToString(str);
 		label6->Text = str;
 	}
+}
+private: System::Void button4_Click(System::Object^  sender, System::EventArgs^  e) {
+	System::String ^str = "Всего тактов: " + System::Convert::ToString(TactsCount) + "\nТактов простоя (в среднем на процессор): " + System::Convert::ToString(InactiveTactsPerProcessor) + "\nОчередь заполнилась " + System::Convert::ToString(FullQTaskCount) + " раз(а)";
+
+	System::Windows::Forms::DialogResult result;
+	result = MessageBox::Show(str,"Статистика");
 }
 };
 }
