@@ -14,8 +14,10 @@ public:
 	T* ring;
 public:
 	TQueue(int _maxsize = 10) {
-		if (_maxsize <= 0)
-			throw "Queue's maxsize must be a positive number";
+		if (_maxsize <= 0) {
+			System::String ^str = "Queue's maxsize must be a positive number";
+			throw str;
+		}
 		maxsize = _maxsize;
 		ring = new T[maxsize];
 		first = 0;
@@ -54,16 +56,20 @@ public:
 	}
 
 	void push(const T elem) {
-		if (isfull())
-			throw "The queue is full, you can't add a new element";
+		if (isfull()) {
+			System::String ^str = "The queue is full, you can't add a new element";
+			throw str;
+		}
 		last = (last + 1) % maxsize;
 		ring[last] = elem;
 		size++;
 	}
 
 	T pop() {
-		if (isempty())
-			throw "The queue is empty, you can't delete an element";
+		if (isempty()) {
+			System::String ^str = "The queue is empty, you can't delete an element";
+			throw str;
+		}
 		int tmp = first;
 		first = (first + 1) % maxsize;
 		size--;
@@ -91,8 +97,10 @@ public:
 	}
 
 	T top() {
-		if (isempty())
-			throw "The queue is empty, you can't get the top";
+		if (isempty()) {
+			System::String ^str = "The queue is empty, you can't get the top";
+			throw str;
+		}
 		return ring[first];
 	}
 };

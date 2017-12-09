@@ -1,6 +1,17 @@
 #pragma once
 #include "Structs.h"
 #include "..\Queue lab\TQueue.h"
+#include <stdlib.h>
+
+int FreeProcCount(Processor *arr, int _procCount) {
+	int res = 0;
+	for (int i = 0; i < _procCount; i++) {
+		if (arr[i].free) {
+			res++;
+		}
+	}
+	return res;
+}
 
 namespace ClusterImmitation {
 
@@ -20,10 +31,10 @@ namespace ClusterImmitation {
 
 		Graphics^ gr;
 		TQueue<Task> *qTask;
-		TQueue<Processor> *qProc;
-		Processor *ProcWithTask;
 		int TactsCount;
-
+		int FullQTaskCount;
+		Processor *ProcArray;
+		
 
 
 
@@ -50,24 +61,7 @@ namespace ClusterImmitation {
 			gr = CreateGraphics();
 			qTask = new TQueue<Task>(10);
 
-
-			/*int ProcCount = Convert::ToInt32(textBox1->Text);
-			qProc = new TQueue<Processor>(ProcCount);
-			for (int i = 0; i < qProc->getMaxsize(); i++) {
-				//qProc[i].push(Processor());
-
-				Processor tmp;
-				tmp.free = true;
-				tmp.ActiveTaskID = 0;
-				tmp.CurrentStepCount = 0;
-				tmp.MaxStepCount = 0;
-				tmp.InactiveTactsCount = 0;
-				tmp.id = qProc->getMaxsize() - 1 - i;
-
-				qProc[i].push(tmp);
-				
-			}*/
-
+	
 		}
 
 	protected:
@@ -130,6 +124,7 @@ namespace ClusterImmitation {
 			this->textBox1->Name = L"textBox1";
 			this->textBox1->Size = System::Drawing::Size(66, 22);
 			this->textBox1->TabIndex = 0;
+			this->textBox1->Text = L"16";
 			// 
 			// label1
 			// 
@@ -155,7 +150,7 @@ namespace ClusterImmitation {
 			this->textBox2->Name = L"textBox2";
 			this->textBox2->Size = System::Drawing::Size(66, 22);
 			this->textBox2->TabIndex = 2;
-			this->textBox2->TextChanged += gcnew System::EventHandler(this, &MyForm::textBox2_TextChanged);
+			this->textBox2->Text = L"50";
 			// 
 			// label3
 			// 
@@ -172,6 +167,7 @@ namespace ClusterImmitation {
 			this->textBox3->Name = L"textBox3";
 			this->textBox3->Size = System::Drawing::Size(66, 22);
 			this->textBox3->TabIndex = 4;
+			this->textBox3->Text = L"10";
 			// 
 			// label4
 			// 
@@ -188,6 +184,7 @@ namespace ClusterImmitation {
 			this->textBox4->Name = L"textBox4";
 			this->textBox4->Size = System::Drawing::Size(66, 22);
 			this->textBox4->TabIndex = 6;
+			this->textBox4->Text = L"8";
 			// 
 			// timer1
 			// 
@@ -275,36 +272,30 @@ namespace ClusterImmitation {
 
 		}
 #pragma endregion
-	private: System::Void textBox2_TextChanged(System::Object^  sender, System::EventArgs^  e) {
-	}
+	/*private: System::Void textBox2_TextChanged(System::Object^  sender, System::EventArgs^  e) {
+	}*/
 	private: System::Void button1_Click(System::Object^  sender, System::EventArgs^  e) {
 		int ProcCount = Convert::ToInt32(textBox1->Text);
 
-		qProc = new TQueue<Processor>(ProcCount);
-		for (int i = 0; i < qProc->getMaxsize(); i++) {
-			//qProc[i].push(Processor());
-
-			Processor tmp;
-			tmp.free = true;
-			tmp.ActiveTaskID = -1;
-			tmp.CurrentStepCount = 0;
-			tmp.MaxStepCount = 0;
-			tmp.InactiveTactsCount = 0;
-			tmp.id = qProc->getMaxsize() - 1 - i;
-
-			qProc->push(tmp);
-			
-		}
-
-		ProcWithTask = new Processor[ProcCount];
-
 		TactsCount = 0;
+		FullQTaskCount = 0;
+
+		ProcArray = new Processor[ProcCount];
+		for (int i = 0; i < ProcCount; i++) {
+			ProcArray[i].free = true;
+			ProcArray[i].ActiveTaskID = -1;
+			ProcArray[i].CurrentStepCount = 0;
+			ProcArray[i].MaxStepCount = 0;
+			ProcArray[i].InactiveTactsCount = 0;
+			ProcArray[i].id = i;
+		}
 
 		int x = 300, y = 10, width = 90, height = 65;
 		int dx = 100, dy = 75;
 		for (int i = 0; i < ProcCount; i++) {
-			qProc->ring[i].X = x;
-			qProc->ring[i].Y = y;
+
+			ProcArray[i].X = x;
+			ProcArray[i].Y = y;
 
 			gr->FillRectangle(Brushes::Gray, x, y, width, height);
 
@@ -332,74 +323,76 @@ private: System::Void timer1_Tick(System::Object^  sender, System::EventArgs^  e
 		int MaxTaskProc = Convert::ToInt32(textBox4->Text);
 		int MaxTaskTact = Convert::ToInt32(textBox3->Text);
 
+		if (qTask->isfull()) {
+			FullQTaskCount++;
+		}
+
 		int chance = rand() % 101;
-		if ((chance >= probability) && ((qTask->isfull()) != 1)) {
+		if ((chance >= (100 - probability)) && (!(qTask->isfull()))) {
 			Task temp;
 			temp.ID = qTask->getSize();
 			temp.ProcCount = rand() % (MaxTaskProc - 1) + 1;
 			temp.StepCount = rand() % (MaxTaskTact - 1) + 1;
 			qTask->push(temp);
 		}
-		if ((qTask->isempty()) != 1) {
-			while (((qProc->getSize()) >= (qTask->top().ProcCount)) && ((qTask->isempty()) != 1)) {
-				Task CurrentTask = qTask->pop();
-				for (int i = 0; i < CurrentTask.ProcCount; i++) {
-					int CurrentID = qProc->top().id;
-					qProc->ring[CurrentID].free = false;
-					qProc->ring[CurrentID].ActiveTaskID = CurrentTask.ID;
-					qProc->ring[CurrentID].CurrentStepCount = CurrentTask.StepCount;
-					qProc->ring[CurrentID].MaxStepCount = CurrentTask.StepCount;
 
-					int color = rand() % 7;
-					switch (color) {
-					case 0: gr->FillRectangle(Brushes::Red, qProc->top().X, qProc->top().Y, 90, 65); break;
-					case 1: gr->FillRectangle(Brushes::Orange, qProc->top().X, qProc->top().Y, 90, 65); break;
-					case 2: gr->FillRectangle(Brushes::Yellow, qProc->top().X, qProc->top().Y, 90, 65); break;
-					case 3: gr->FillRectangle(Brushes::Green, qProc->top().X, qProc->top().Y, 90, 65); break;
-					case 4: gr->FillRectangle(Brushes::Blue, qProc->top().X, qProc->top().Y, 90, 65); break;
-					case 5: gr->FillRectangle(Brushes::DarkBlue, qProc->top().X, qProc->top().Y, 90, 65); break;
-					case 6: gr->FillRectangle(Brushes::Purple, qProc->top().X, qProc->top().Y, 90, 65); break;
-					default: break;
+		if (!(qTask->isempty())) {
+			while (FreeProcCount(ProcArray, CountOfProc) >= (qTask->top().ProcCount)) {
+			//while (FreeProcCount(ProcArray, CountOfProc) >= (qTask->ring[qTask->getFirst()].ProcCount)) {
+				Task CurrentTask = qTask->pop();
+				int color = rand() % 7;
+				for (int j = 0; j < CurrentTask.ProcCount; j++) {
+					int CurrentID;
+					for (int k = 0; k < CountOfProc; k++) {
+						if (ProcArray[k].free) {
+							CurrentID = k; 
+							break;
+						}
 					}
 
-					//ProcWithTask[(qProc->getMaxsize()) - (qProc->getSize())] = (qProc->pop());
+					ProcArray[CurrentID].free = false;
+					ProcArray[CurrentID].ActiveTaskID = CurrentTask.ID;
+					ProcArray[CurrentID].CurrentStepCount = CurrentTask.StepCount;
+					ProcArray[CurrentID].MaxStepCount = CurrentTask.StepCount;
 
-					Processor tmp = (qProc->pop());
-					ProcWithTask[(qProc->getMaxsize()) - (qProc->getSize()) - 1] = tmp;
+					switch (color) {
+					case 0: gr->FillRectangle(Brushes::Red, ProcArray[CurrentID].X, ProcArray[CurrentID].Y, 90, 65); break;
+					case 1: gr->FillRectangle(Brushes::Orange, ProcArray[CurrentID].X, ProcArray[CurrentID].Y, 90, 65); break;
+					case 2: gr->FillRectangle(Brushes::Yellow, ProcArray[CurrentID].X, ProcArray[CurrentID].Y, 90, 65); break;
+					case 3: gr->FillRectangle(Brushes::Green, ProcArray[CurrentID].X, ProcArray[CurrentID].Y, 90, 65); break;
+					case 4: gr->FillRectangle(Brushes::Blue, ProcArray[CurrentID].X, ProcArray[CurrentID].Y, 90, 65); break;
+					case 5: gr->FillRectangle(Brushes::DarkBlue, ProcArray[CurrentID].X, ProcArray[CurrentID].Y, 90, 65); break;
+					case 6: gr->FillRectangle(Brushes::Purple, ProcArray[CurrentID].X, ProcArray[CurrentID].Y, 90, 65); break;
+					default: break;
+					}
 				}
 			}
 		}
 
-		for (int i = 0; i < (qProc->getMaxsize()) - (qProc->getSize()); i++) {
-			ProcWithTask[i].CurrentStepCount--;
-			if ((ProcWithTask[i].CurrentStepCount) == 0) {
-				ProcWithTask[i].free = true;
-				ProcWithTask[i].ActiveTaskID = -1;
-				ProcWithTask[i].MaxStepCount = 0;
+		for (int i = 0; i < CountOfProc; i++) {
+			if (ProcArray[i].free) {
+				ProcArray[i].InactiveTactsCount++;
+			}
+			else {
+				ProcArray[i].CurrentStepCount--;
+				if (ProcArray[i].CurrentStepCount == 0) {
+					ProcArray[i].free = true;
+					ProcArray[i].ActiveTaskID = -1;
+					ProcArray[i].MaxStepCount = 0;
 
-				gr->FillRectangle(Brushes::Gray, ProcWithTask[i].X, ProcWithTask[i].Y, 90, 65);
-
-				qProc->push(ProcWithTask[i]);
-
-				for (int j = i; j < (qProc->getMaxsize()) - (qProc->getSize()) - 1; j++) {
-					ProcWithTask[j] = ProcWithTask[j + 1];
+					gr->FillRectangle(Brushes::Gray, ProcArray[i].X, ProcArray[i].Y, 90, 65);
 				}
-
-				i--;
 			}
 		}
-
-		for (int i = 0; i < qProc->getMaxsize(); i++) {
-			qProc->ring[i].InactiveTactsCount++;
-		}
-
+	
 		TactsCount++;
 		textBox5->Text = System::Convert::ToString(TactsCount);
+		
+
 	}
-	catch (int str) {
-		//textBox5->Text = System::Convert::ToString(str);
-		label6->Text = System::Convert::ToString(str);
-		timer1->Enabled = false;
+	catch (System::String ^str) {
+		//label6->Text = System::Convert::ToString(str);
+		label6->Text = str;
 	}
 }
 };
