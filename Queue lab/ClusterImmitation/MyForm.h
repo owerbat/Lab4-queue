@@ -36,6 +36,8 @@ namespace ClusterImmitation {
 		Processor *ProcArray;
 		int CountOfInactiveTacts;
 		double InactiveTactsPerProcessor;
+		int IDCounter;
+		int CountOfCurrentTasks;
 		
 
 
@@ -299,6 +301,8 @@ namespace ClusterImmitation {
 		FullQTaskCount = 0;
 		CountOfInactiveTacts = 0;
 		InactiveTactsPerProcessor = 0.0;
+		IDCounter = 0;
+		CountOfCurrentTasks = 0;
 
 		ProcArray = new Processor[ProcCount];
 		for (int i = 0; i < ProcCount; i++) {
@@ -359,9 +363,11 @@ private: System::Void timer1_Tick(System::Object^  sender, System::EventArgs^  e
 		int chance = rand() % 101;
 		if ((chance >= (100 - probability)) && (!(qTask->isfull()))) {
 			Task temp;
-			temp.ID = qTask->getSize();
+			temp.ID = IDCounter;
+			IDCounter++;
 			temp.ProcCount = rand() % (MaxTaskProc - 1) + 1;
 			temp.StepCount = rand() % (MaxTaskTact - 1) + 1;
+			temp.Color = rand() % 7;
 
 			/*gr->FillRectangle(Brushes::LimeGreen, 1165.0, (float) 10 + TaskHeight * (qTask->getSize()), 90.0, TaskHeight);
 			Pen ^blackpen = gcnew Pen(Brushes::Black, 2.0f);
@@ -370,20 +376,38 @@ private: System::Void timer1_Tick(System::Object^  sender, System::EventArgs^  e
 			qTask->push(temp);
 		}
 
-		gr->FillRectangle(Brushes::White, 1164, 9, 92, 592);
-		for (int i = 0; i < qTask->getSize(); i++) {
-			gr->FillRectangle(Brushes::LimeGreen, 1165.0, (float)10 + TaskHeight * i, 90.0, TaskHeight);
-			gr->DrawRectangle(blackpen, 1165.0, (float)10 + TaskHeight * i, 90.0, TaskHeight);
+		if (!(qTask->isempty())) {
+			gr->FillRectangle(Brushes::White, 1164, 9, 92, 592);
+			TQueue<Task> CopyQ(*qTask);
+			for (int i = 0; i < qTask->getSize(); i++) {
+				//gr->FillRectangle(Brushes::LimeGreen, 1165.0, (float)10 + TaskHeight * i, 90.0, TaskHeight);
+				switch (CopyQ.top().Color) {
+				case 0: gr->FillRectangle(Brushes::Red, 1165.0, (float)10 + TaskHeight * i, 90.0, TaskHeight); break;
+				case 1: gr->FillRectangle(Brushes::Orange, 1165.0, (float)10 + TaskHeight * i, 90.0, TaskHeight); break;
+				case 2: gr->FillRectangle(Brushes::Yellow, 1165.0, (float)10 + TaskHeight * i, 90.0, TaskHeight); break;
+				case 3: gr->FillRectangle(Brushes::Green, 1165.0, (float)10 + TaskHeight * i, 90.0, TaskHeight); break;
+				case 4: gr->FillRectangle(Brushes::Blue, 1165.0, (float)10 + TaskHeight * i, 90.0, TaskHeight); break;
+				case 5: gr->FillRectangle(Brushes::DarkBlue, 1165.0, (float)10 + TaskHeight * i, 90.0, TaskHeight); break;
+				case 6: gr->FillRectangle(Brushes::Purple, 1165.0, (float)10 + TaskHeight * i, 90.0, TaskHeight); break;
+				default: break;
+				}
+
+				gr->DrawRectangle(blackpen, 1165.0, (float)10 + TaskHeight * i, 90.0, TaskHeight);
+
+				//String^ drawString = System::Convert::ToString((qTask->ring[i + (qTask->getFirst())]).ID);
+				String^ drawString = System::Convert::ToString(CopyQ.pop().ID);
+				System::Drawing::Font^ drawFont = gcnew System::Drawing::Font("Arial", 16);
+				System::Drawing::SolidBrush^ drawBrush = gcnew System::Drawing::SolidBrush(System::Drawing::Color::Black);
+				gr->DrawString(drawString, drawFont, drawBrush, System::Drawing::RectangleF(1165.0, (float)10 + TaskHeight * i, 90.0, TaskHeight));
+			}
 		}
 
 		if (!(qTask->isempty())) {
 			while (FreeProcCount(ProcArray, CountOfProc) >= (qTask->top().ProcCount)) {
-			//while (FreeProcCount(ProcArray, CountOfProc) >= (qTask->ring[qTask->getFirst()].ProcCount)) {
 				Task CurrentTask = qTask->pop();
+				CountOfCurrentTasks++;
 
-				//gr->FillRectangle(Brushes::White, 1165.0, (float)10 + TaskHeight * (qTask->getSize() - 1), 90.0, TaskHeight);
-
-				int color = rand() % 7;
+				//int color = rand() % 7;
 				for (int j = 0; j < CurrentTask.ProcCount; j++) {
 					int CurrentID;
 					for (int k = 0; k < CountOfProc; k++) {
@@ -398,7 +422,8 @@ private: System::Void timer1_Tick(System::Object^  sender, System::EventArgs^  e
 					ProcArray[CurrentID].CurrentStepCount = CurrentTask.StepCount;
 					ProcArray[CurrentID].MaxStepCount = CurrentTask.StepCount;
 
-					switch (color) {
+					//switch (color) {
+					switch(CurrentTask.Color){
 					case 0: gr->FillRectangle(Brushes::Red, ProcArray[CurrentID].X, ProcArray[CurrentID].Y, 90, 65); break;
 					case 1: gr->FillRectangle(Brushes::Orange, ProcArray[CurrentID].X, ProcArray[CurrentID].Y, 90, 65); break;
 					case 2: gr->FillRectangle(Brushes::Yellow, ProcArray[CurrentID].X, ProcArray[CurrentID].Y, 90, 65); break;
@@ -440,7 +465,7 @@ private: System::Void timer1_Tick(System::Object^  sender, System::EventArgs^  e
 	}
 }
 private: System::Void button4_Click(System::Object^  sender, System::EventArgs^  e) {
-	System::String ^str = "Всего тактов: " + System::Convert::ToString(TactsCount) + "\nТактов простоя (в среднем на процессор): " + System::Convert::ToString(InactiveTactsPerProcessor) + "\nОчередь заполнилась " + System::Convert::ToString(FullQTaskCount) + " раз(а)";
+	System::String ^str = "Всего тактов: " + System::Convert::ToString(TactsCount) + "\nТактов простоя (в среднем на процессор): " + System::Convert::ToString(InactiveTactsPerProcessor) + "\nОчередь заполнилась " + System::Convert::ToString(FullQTaskCount) + " раз(а)\nВыполнено задач: " + System::Convert::ToString(CountOfCurrentTasks);
 
 	System::Windows::Forms::DialogResult result;
 	result = MessageBox::Show(str,"Статистика");

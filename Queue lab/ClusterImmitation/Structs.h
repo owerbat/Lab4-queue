@@ -4,6 +4,7 @@ struct Task {
 	int StepCount;
 	int ProcCount;
 	int ID;
+	int Color;
 };
 
 struct Processor {

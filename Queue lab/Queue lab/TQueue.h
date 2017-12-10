@@ -27,15 +27,15 @@ public:
 
 	TQueue(const TQueue& q) {
 		if (maxsize != q.maxsize) {
-			q.maxsize = maxsize;
-			delete[] q.ring;
-			q.ring = new T[q.maxsize];
+			maxsize = q.maxsize;
+			delete[] ring;
+			ring = new T[maxsize];
 		}
-		q.first = first;
-		q.last = last;
-		q.size = size;
+		first = q.first;
+		last = q.last;
+		size = q.size;
 		for (int i = first; i <= last; i++) {
-			q.ring[i] = ring[i];
+			ring[i] = q.ring[i];
 		}
 	}
 
@@ -102,5 +102,9 @@ public:
 			throw str;
 		}
 		return ring[first];
+	}
+
+	int getLast(){
+		return last;
 	}
 };
