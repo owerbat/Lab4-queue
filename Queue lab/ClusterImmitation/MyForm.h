@@ -379,6 +379,7 @@ private: System::Void timer1_Tick(System::Object^  sender, System::EventArgs^  e
 		if (!(qTask->isempty())) {
 			gr->FillRectangle(Brushes::White, 1164, 9, 92, 592);
 			TQueue<Task> CopyQ(*qTask);
+			//TQueue<Task> CopyQ = *qTask;
 			for (int i = 0; i < qTask->getSize(); i++) {
 				//gr->FillRectangle(Brushes::LimeGreen, 1165.0, (float)10 + TaskHeight * i, 90.0, TaskHeight);
 				switch (CopyQ.top().Color) {
@@ -389,7 +390,7 @@ private: System::Void timer1_Tick(System::Object^  sender, System::EventArgs^  e
 				case 4: gr->FillRectangle(Brushes::Blue, 1165.0, (float)10 + TaskHeight * i, 90.0, TaskHeight); break;
 				case 5: gr->FillRectangle(Brushes::DarkBlue, 1165.0, (float)10 + TaskHeight * i, 90.0, TaskHeight); break;
 				case 6: gr->FillRectangle(Brushes::Purple, 1165.0, (float)10 + TaskHeight * i, 90.0, TaskHeight); break;
-				default: break;
+				default: gr->FillRectangle(Brushes::Black, 1165.0, (float)10 + TaskHeight * i, 90.0, TaskHeight); break;
 				}
 
 				gr->DrawRectangle(blackpen, 1165.0, (float)10 + TaskHeight * i, 90.0, TaskHeight);

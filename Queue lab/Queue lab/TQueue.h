@@ -26,15 +26,12 @@ public:
 	}
 
 	TQueue(const TQueue& q) {
-		if (maxsize != q.maxsize) {
-			maxsize = q.maxsize;
-			delete[] ring;
-			ring = new T[maxsize];
-		}
+		maxsize = q.maxsize;
+		ring = new T[maxsize];
 		first = q.first;
 		last = q.last;
 		size = q.size;
-		for (int i = first; i <= last; i++) {
+		for (int i = 0; i < maxsize; i++) {
 			ring[i] = q.ring[i];
 		}
 	}
