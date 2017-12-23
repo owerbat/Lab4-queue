@@ -4,7 +4,6 @@
 #include <stdlib.h>
 
 using namespace std;
-//using namespace System;
 
 template <class T>
 class TQueue {
@@ -12,12 +11,12 @@ class TQueue {
 	int last;
 	int size;
 	int maxsize;
+public:
 	T* ring;
 public:
 	TQueue(int _maxsize = 10) {
 		if (_maxsize <= 0) {
-			//System::String ^str = "Queue's maxsize must be a positive number";
-			char *str = "Queue's maxsize must be a positive number";
+			System::String ^str = "Queue's maxsize must be a positive number";
 			throw str;
 		}
 		maxsize = _maxsize;
@@ -56,8 +55,7 @@ public:
 
 	void push(const T elem) {
 		if (isfull()) {
-			//System::String ^str = "The queue is full, you can't add a new element";
-			char *str = "The queue is full, you can't add a new element";
+			System::String ^str = "The queue is full, you can't add a new element";
 			throw str;
 		}
 		last = (last + 1) % maxsize;
@@ -67,8 +65,7 @@ public:
 
 	T pop() {
 		if (isempty()) {
-			//System::String ^str = "The queue is empty, you can't delete an element";
-			char *str = "The queue is empty, you can't delete an element";
+			System::String ^str = "The queue is empty, you can't delete an element";
 			throw str;
 		}
 		int tmp = first;
@@ -99,8 +96,7 @@ public:
 
 	T top() {
 		if (isempty()) {
-			//System::String ^str = "The queue is empty, you can't get the top";
-			char *str = "The queue is empty, you can't get the top";
+			System::String ^str = "The queue is empty, you can't get the top";
 			throw str;
 		}
 		return ring[first];
@@ -108,19 +104,5 @@ public:
 
 	int getLast(){
 		return last;
-	}
-
-	int operator==(const TQueue& q) const {
-		if ((maxsize != q.maxsize) || (size != q.size) || (first != q.first) || (last != q.last))
-			return 0;
-		for (int i = first; i < last; i++) {
-			if (ring[i] != q.ring[i])
-				return 0;
-		}
-		return 1;
-	}
-
-	int operator!=(const TQueue& q) const {
-		return !(*this == q);
 	}
 };

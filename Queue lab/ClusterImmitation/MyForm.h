@@ -1,7 +1,8 @@
 #pragma once
 #include "Structs.h"
-#include "..\Queue lab\TQueue.h"
+//#include "..\Queue lab\TQueue.h"
 #include <stdlib.h>
+#include "TQueue.h"
 
 int FreeProcCount(Processor *arr, int _procCount) {
 	int res = 0;
@@ -292,8 +293,6 @@ namespace ClusterImmitation {
 
 		}
 #pragma endregion
-	/*private: System::Void textBox2_TextChanged(System::Object^  sender, System::EventArgs^  e) {
-	}*/
 	private: System::Void button1_Click(System::Object^  sender, System::EventArgs^  e) {
 		int ProcCount = Convert::ToInt32(textBox1->Text);
 
@@ -331,10 +330,6 @@ namespace ClusterImmitation {
 				x += dx;
 			}
 		}
-		
-		/*gr->FillRectangle(Brushes::LimeGreen, 1165, 10, 90, 65);
-		Pen ^blackpen = gcnew Pen(Brushes::Black, 2.0f);
-		gr->DrawRectangle(blackpen, 1165, 10, 90, 65);*/
 
 		gr->FillRectangle(Brushes::White, 1164, 9, 92, 592);
 
@@ -369,19 +364,13 @@ private: System::Void timer1_Tick(System::Object^  sender, System::EventArgs^  e
 			temp.StepCount = rand() % (MaxTaskTact - 1) + 1;
 			temp.Color = rand() % 7;
 
-			/*gr->FillRectangle(Brushes::LimeGreen, 1165.0, (float) 10 + TaskHeight * (qTask->getSize()), 90.0, TaskHeight);
-			Pen ^blackpen = gcnew Pen(Brushes::Black, 2.0f);
-			gr->DrawRectangle(blackpen, 1165.0, (float) 10 + TaskHeight * (qTask->getSize()), 90.0, TaskHeight);*/
-
 			qTask->push(temp);
 		}
 
 		if (!(qTask->isempty())) {
 			gr->FillRectangle(Brushes::White, 1164, 9, 92, 592);
 			TQueue<Task> CopyQ(*qTask);
-			//TQueue<Task> CopyQ = *qTask;
 			for (int i = 0; i < qTask->getSize(); i++) {
-				//gr->FillRectangle(Brushes::LimeGreen, 1165.0, (float)10 + TaskHeight * i, 90.0, TaskHeight);
 				switch (CopyQ.top().Color) {
 				case 0: gr->FillRectangle(Brushes::Red, 1165.0, (float)10 + TaskHeight * i, 90.0, TaskHeight); break;
 				case 1: gr->FillRectangle(Brushes::Orange, 1165.0, (float)10 + TaskHeight * i, 90.0, TaskHeight); break;
@@ -395,7 +384,6 @@ private: System::Void timer1_Tick(System::Object^  sender, System::EventArgs^  e
 
 				gr->DrawRectangle(blackpen, 1165.0, (float)10 + TaskHeight * i, 90.0, TaskHeight);
 
-				//String^ drawString = System::Convert::ToString((qTask->ring[i + (qTask->getFirst())]).ID);
 				String^ drawString = System::Convert::ToString(CopyQ.pop().ID);
 				System::Drawing::Font^ drawFont = gcnew System::Drawing::Font("Arial", 16);
 				System::Drawing::SolidBrush^ drawBrush = gcnew System::Drawing::SolidBrush(System::Drawing::Color::Black);
@@ -408,7 +396,6 @@ private: System::Void timer1_Tick(System::Object^  sender, System::EventArgs^  e
 				Task CurrentTask = qTask->pop();
 				CountOfCurrentTasks++;
 
-				//int color = rand() % 7;
 				for (int j = 0; j < CurrentTask.ProcCount; j++) {
 					int CurrentID;
 					for (int k = 0; k < CountOfProc; k++) {
@@ -423,7 +410,6 @@ private: System::Void timer1_Tick(System::Object^  sender, System::EventArgs^  e
 					ProcArray[CurrentID].CurrentStepCount = CurrentTask.StepCount;
 					ProcArray[CurrentID].MaxStepCount = CurrentTask.StepCount;
 
-					//switch (color) {
 					switch(CurrentTask.Color){
 					case 0: gr->FillRectangle(Brushes::Red, ProcArray[CurrentID].X, ProcArray[CurrentID].Y, 90, 65); break;
 					case 1: gr->FillRectangle(Brushes::Orange, ProcArray[CurrentID].X, ProcArray[CurrentID].Y, 90, 65); break;

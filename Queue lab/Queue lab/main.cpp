@@ -1,11 +1,11 @@
 #include "TQueue.h"
 
 int main() {
-	/*try {
+	try {
 		TQueue<int> a(-5);
 	}
-	catch (char * str) {
+	catch (char *str) {
 		cout << str << endl;
-	}*/
+	}
 	return 0;
 }
