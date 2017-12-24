@@ -143,7 +143,6 @@
       <FileType>CppForm</FileType>
     </ClInclude>
     <ClInclude Include="Structs.h" />
-    <ClInclude Include="TQueue.h" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="MyForm.resx">

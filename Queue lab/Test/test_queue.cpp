@@ -76,14 +76,6 @@ TEST(TQueue, full_check_return_false_when_queue_is_not_full) {
 	EXPECT_EQ(0, q.isfull());
 }
 
-TEST(TQueue, can_get_first_element) {
-	TQueue<int> q(3);
-
-	q.push(1);
-
-	EXPECT_EQ(1, q.getFirstElem());
-}
-
 TEST(TQueue, can_get_last_element) {
 	TQueue<int> q(3);
 

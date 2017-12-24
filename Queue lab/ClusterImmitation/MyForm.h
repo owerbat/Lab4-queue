@@ -1,8 +1,7 @@
 #pragma once
 #include "Structs.h"
-//#include "..\Queue lab\TQueue.h"
+#include "..\Queue lab\TQueue.h"
 #include <stdlib.h>
-#include "TQueue.h"
 
 int FreeProcCount(Processor *arr, int _procCount) {
 	int res = 0;
@@ -295,7 +294,7 @@ namespace ClusterImmitation {
 #pragma endregion
 	private: System::Void button1_Click(System::Object^  sender, System::EventArgs^  e) {
 		int ProcCount = Convert::ToInt32(textBox1->Text);
-
+		
 		TactsCount = 0;
 		FullQTaskCount = 0;
 		CountOfInactiveTacts = 0;
@@ -447,8 +446,9 @@ private: System::Void timer1_Tick(System::Object^  sender, System::EventArgs^  e
 		InactiveTactsPerProcessor = (double) CountOfInactiveTacts / CountOfProc;
 		
 	}
-	catch (System::String ^str) {
-		label6->Text = str;
+	catch (char *str) {
+		System::String ^newStr = gcnew String(str);
+		label6->Text = newStr;
 	}
 }
 private: System::Void button4_Click(System::Object^  sender, System::EventArgs^  e) {

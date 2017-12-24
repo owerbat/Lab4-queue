@@ -4,7 +4,6 @@
 #include <stdlib.h>
 
 using namespace std;
-//using namespace System;
 
 template <class T>
 class TQueue {
@@ -16,7 +15,6 @@ class TQueue {
 public:
 	TQueue(int _maxsize = 10) {
 		if (_maxsize <= 0) {
-			//System::String ^str = "Queue's maxsize must be a positive number";
 			char *str = "Queue's maxsize must be a positive number";
 			throw str;
 		}
@@ -56,7 +54,6 @@ public:
 
 	void push(const T elem) {
 		if (isfull()) {
-			//System::String ^str = "The queue is full, you can't add a new element";
 			char *str = "The queue is full, you can't add a new element";
 			throw str;
 		}
@@ -67,7 +64,6 @@ public:
 
 	T pop() {
 		if (isempty()) {
-			//System::String ^str = "The queue is empty, you can't delete an element";
 			char *str = "The queue is empty, you can't delete an element";
 			throw str;
 		}
@@ -75,10 +71,6 @@ public:
 		first = (first + 1) % maxsize;
 		size--;
 		return ring[tmp];
-	}
-
-	T getFirstElem() {
-		return ring[first];
 	}
 
 	T getLastElem() {
@@ -99,7 +91,6 @@ public:
 
 	T top() {
 		if (isempty()) {
-			//System::String ^str = "The queue is empty, you can't get the top";
 			char *str = "The queue is empty, you can't get the top";
 			throw str;
 		}

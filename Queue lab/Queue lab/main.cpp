@@ -2,7 +2,7 @@
 
 int main() {
 	try {
-		TQueue<int> a(-5);
+		TQueue<int> a(5);
 	}
 	catch (char *str) {
 		cout << str << endl;
